@@ -10,7 +10,16 @@
     phoneB64: 'ODUyOTQzMjM0MTY=',
     telegramB64: 'bmcyYjMw', // Telegram username without @, encode with: printf yourname | base64
     teases: ['真的嗎？', '再想想嘛', '按不到的啦', '你確定？', '不可以說不要', '好啦好啦就答應吧'],
-    foods: [['🍲', '火鍋'], ['🍜', '牛肉麵'], ['🍻', '酒吧'], ['🍢', '夜市小吃'], ['🥩', '烤肉'], ['🍥', '拉麵']],
+    maxFoods: 2, // how many foods the invitee can pick
+    // [icon, name]: icon is an emoji or inline SVG markup (trusted, rendered as HTML)
+    foods: [
+      ['🍲', '火鍋'],
+      ['🧋', '台式美食'],
+      ['<svg width="24" height="24" viewBox="0 0 26 26"><ellipse cx="12" cy="22.5" rx="10" ry="2" fill="#e9d6c8"/><path d="M18.5 10.5 q5 0 4.5 3.8 q-.5 3 -5 3" stroke="#fff" stroke-width="2.2" fill="none"/><path d="M18.5 10.5 q5 0 4.5 3.8 q-.5 3 -5 3" stroke="#c9b3a3" stroke-width="1" fill="none"/><path d="M3 9 h18 q0 12 -9 12.5 q-9 -.5 -9 -12.5 Z" fill="#fff" stroke="#c9b3a3" stroke-width="1"/><ellipse cx="12" cy="9.2" rx="8.6" ry="2.6" fill="#b07a52"/><path d="M12 11 c-2.6 -1.6 -2.2 -3.4 -.8 -3.4 c.5 0 .8 .4 .8 .7 c0 -.3 .3 -.7 .8 -.7 c1.4 0 1.8 1.8 -.8 3.4 Z" fill="#f6ead8"/><path d="M9 5.5 q-1 -1.5 0 -3 M12 5.5 q-1 -1.5 0 -3 M15 5.5 q-1 -1.5 0 -3" stroke="#c9b3a3" stroke-width=".9" fill="none" stroke-linecap="round"/></svg>', 'Cafe'],
+      ['🍣', '壽司'],
+      ['<svg width="24" height="24" viewBox="0 0 26 26"><ellipse cx="13" cy="12" rx="11.5" ry="3.6" fill="#8fb24a"/><path d="M1.5 12 h23 q-1 9.5 -11.5 10 q-10.5 -.5 -11.5 -10 Z" fill="#fff" stroke="#d8c8bc" stroke-width="1"/><path d="M4 19.5 q9 3 18 0" stroke="#7b9fd0" stroke-width="1.2" fill="none"/><ellipse cx="13" cy="12" rx="10" ry="2.8" fill="#9cc15a"/><ellipse cx="9" cy="11.6" rx="2" ry="1" fill="#f3e3c4"/><ellipse cx="16" cy="12.6" rx="1.8" ry=".9" fill="#f3e3c4"/><circle cx="12.5" cy="12.8" r=".9" fill="#e0402f"/><circle cx="18.5" cy="11.4" r=".8" fill="#e0402f"/><path d="M12 10.5 q2.4 -3.6 5.2 -2.4 q-1.6 3 -5.2 2.4 Z" fill="#2f7d32"/><path d="M12 10.5 q2 -1.4 4.4 -2" stroke="#1f5d24" stroke-width=".5" fill="none"/></svg>', '泰式美食'], // Thai green curry
+      ['🍜', '拉麵'],
+    ],
     message: (date, food) => `我答應咗同你去約會 ♥\n日期：${date}\n想食：${food}`,
   };
   // --------------------
@@ -63,36 +72,44 @@
   date.min = `${t.getFullYear()}-${pad2(t.getMonth() + 1)}-${pad2(t.getDate())}`;
   // checkValidity() also rejects a past date typed in by hand, which `min` alone doesn't block
   const dateOk = () => !!date.value && date.checkValidity();
-  date.addEventListener('input', () => { toFood.disabled = !dateOk(); });
+  const week = ['日', '一', '二', '三', '四', '五', '六'];
+  const weekday = () => { const [Y, M, D] = date.value.split('-').map(Number); return week[new Date(Y, M - 1, D).getDay()]; };
+  date.addEventListener('input', () => {
+    toFood.disabled = !dateOk();
+    $('weekday').textContent = date.value ? `（星期${weekday()}）` : '';
+  });
   toFood.addEventListener('click', () => { if (dateOk()) show(2); });
 
   // Step 3: food
   const grid = $('foods'), toDone = $('toDone');
-  let picked = null;
+  let picked = []; // in pick order, so the oldest is dropped when over the limit
+  const syncFoods = () => {
+    grid.querySelectorAll('.food').forEach(x => x.setAttribute('aria-pressed', picked.includes(x.dataset.name)));
+    toDone.disabled = !picked.length;
+  };
   CONFIG.foods.forEach(([ic, name]) => {
     const b = document.createElement('button');
     b.type = 'button'; b.className = 'food'; b.setAttribute('aria-pressed', 'false');
     b.innerHTML = `<span class="ic" aria-hidden="true">${ic}</span><span></span>`;
-    b.lastChild.textContent = name;
+    b.lastChild.textContent = name; b.dataset.name = name;
     b.addEventListener('click', () => {
-      grid.querySelectorAll('.food').forEach(x => x.setAttribute('aria-pressed', 'false'));
-      b.setAttribute('aria-pressed', 'true');
-      picked = name; toDone.disabled = false;
+      if (picked.includes(name)) picked = picked.filter(x => x !== name);
+      else picked = [...picked, name].slice(-CONFIG.maxFoods);
+      syncFoods();
     });
     grid.appendChild(b);
   });
 
   // Step 4: summary + WhatsApp
   const decode = b64 => { try { return atob(b64); } catch { return ''; } };
-  const week = ['日', '一', '二', '三', '四', '五', '六'];
   toDone.addEventListener('click', () => {
-    if (!picked || !dateOk()) return;
-    const [Y, M, D] = date.value.split('-').map(Number);
-    const wd = week[new Date(Y, M - 1, D).getDay()];
-    const dStr = `${M}月${D}日（星期${wd}）`;
+    if (!picked.length || !dateOk()) return;
+    const [, M, D] = date.value.split('-').map(Number);
+    const dStr = `${M}月${D}日（星期${weekday()}）`;
     $('outDate').textContent = dStr;
-    $('outFood').textContent = picked;
-    const text = CONFIG.message(dStr, picked);
+    const foodStr = picked.join('、');
+    $('outFood').textContent = foodStr;
+    const text = CONFIG.message(dStr, foodStr);
     $('msg').textContent = text;
     // Empty or malformed number → WhatsApp share sheet instead of a dead link
     const phone = decode(CONFIG.phoneB64);
@@ -110,9 +127,8 @@
 
   $('restart').addEventListener('click', () => {
     tries = 0; tease.textContent = ''; yes.style.transform = '';
-    date.value = ''; toFood.disabled = true;
-    picked = null; toDone.disabled = true;
-    grid.querySelectorAll('.food').forEach(x => x.setAttribute('aria-pressed', 'false'));
+    date.value = ''; $('weekday').textContent = ''; toFood.disabled = true;
+    picked = []; syncFoods();
     $('copy').textContent = '複製訊息';
     show(0);
   });

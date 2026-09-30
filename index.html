@@ -47,14 +47,17 @@
     <h1>什麼時候有空？</h1>
     <p class="sub">揀個好日子</p>
     <label for="date" class="sub" style="margin:0">日期</label>
-    <input type="date" id="date">
+    <div class="date-wrap">
+      <input type="date" id="date" aria-describedby="weekday">
+      <span class="weekday" id="weekday" aria-live="polite"></span>
+    </div>
     <button class="btn btn-yes btn-wide" id="toFood" type="button" disabled>就這天！♥</button>
   </section>
 
   <!-- Step 3: food -->
   <section class="step" id="s3" hidden>
     <h1>想吃點什麼？</h1>
-    <p class="sub">揀一個你現在最想吃的</p>
+    <p class="sub">揀最多兩個你現在最想吃的</p>
     <div class="foods" id="foods" role="group" aria-label="食物選擇"></div>
     <button class="btn btn-yes btn-wide" id="toDone" type="button" disabled>就吃這個！</button>
   </section>

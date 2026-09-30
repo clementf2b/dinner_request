@@ -90,6 +90,9 @@ input[type="date"] {
   border-radius: 12px;
   padding: 12px 14px;
 }
+.date-wrap { position: relative; width: 100%; }
+/* Sits inside the input, left of the calendar icon; clicks pass through to the input */
+.weekday { position: absolute; right: 44px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 14px; pointer-events: none; }
 input[type="date"]:focus-visible { outline: 3px solid #f3a6c0; outline-offset: 1px; }
 .foods { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; width: 100%; }
 .food {
@@ -103,7 +106,8 @@ input[type="date"]:focus-visible { outline: 3px solid #f3a6c0; outline-offset: 1
   cursor: pointer;
   display: flex; flex-direction: column; align-items: center; gap: 6px;
 }
-.food .ic { font-size: 24px; line-height: 1; }
+.food .ic { font-size: 24px; line-height: 1; height: 24px; }
+.food .ic svg { display: block; }
 .food[aria-pressed="true"] { border-color: var(--accent); background: #fde6ee; }
 .food:focus-visible { outline: 3px solid #f3a6c0; outline-offset: 1px; }
 .summary {
@@ -128,4 +132,13 @@ input[type="date"]:focus-visible { outline: 3px solid #f3a6c0; outline-offset: 1
 }
 a.btn { text-decoration: none; display: inline-block; box-sizing: border-box; }
 .link { background: none; border: 0; color: var(--muted); font: 13px var(--body); text-decoration: underline; cursor: pointer; padding: 4px; }
-@media (prefers-reduced-motion: reduce) { .btn, .btn-no.loose { transition: none; } }
+/* Subtle lift on hover; mouse only, so taps on phones don't leave buttons stuck raised.
+   The growing 好喔 button sets an inline transform, which wins over this, as intended. */
+.food { transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease; }
+@media (hover: hover) {
+  .btn:not(:disabled):hover, .food:hover { transform: translateY(-2px); box-shadow: 0 6px 14px -8px rgba(160, 60, 90, .45); }
+  .food:not([aria-pressed="true"]):hover { border-color: var(--line); }
+  .link:hover { color: var(--ink); }
+}
+.btn:not(:disabled):active, .food:active { transform: translateY(0); box-shadow: none; }
+@media (prefers-reduced-motion: reduce) { .btn, .food, .btn-no.loose { transition: none; } }
