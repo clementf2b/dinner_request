@@ -8,7 +8,7 @@
     //    2. Paste the output (e.g. ODUyOTEyMzQ1Njc=) between the quotes: phoneB64: 'ODUyOTEyMzQ1Njc='
     //    Leave empty = WhatsApp button opens the share sheet and the invitee picks who to send to
     phoneB64: 'ODUyOTQzMjM0MTY=',
-    // Google Apps Script web app URL (see apps-script/Code.gs); results go to your Sheet + email. Empty = off
+    // Google Apps Script web app URL (see apps-script/Code.gs); results go to your Sheet. Empty = off
     resultUrl: 'https://script.google.com/macros/s/AKfycbyAU7RrOaOglID6NGD4ZNk2kapFNR21qfFeUV2GEH4iObF3YOZWh11q79f3Z3EqrmSjFQ/exec',
     telegramB64: 'bmcyYjMw', // Telegram username without @, encode with: printf yourname | base64
     teases: ['真的嗎？', '再想想嘛', '按不到的啦', '你確定？', '不可以說不要', '好啦好啦就答應吧'],

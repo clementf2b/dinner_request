@@ -12,6 +12,6 @@ Run it locally:
 python3 -m http.server 8765
 ```
 
-To get each answer in a Google Sheet and by email, follow the setup steps at the top of `apps-script/Code.gs`, then paste the Web app URL into `CONFIG.resultUrl`.
+To get each answer in a Google Sheet, follow the setup steps at the top of `apps-script/Code.gs`, then paste the Web app URL into `CONFIG.resultUrl`.
 
 To deploy on Vercel, import this GitHub repo at vercel.com/new. Leave Framework as **Other** and don't set a build command. Every push to `main` then deploys automatically.
