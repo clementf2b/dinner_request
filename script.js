@@ -3,10 +3,10 @@
   const CONFIG = {
     // ponytail: Base64 only hides these from scrapers, anyone reading the source can decode them.
     // Upgrade path: a Vercel function that redirects using env vars.
-    // 👉 將你嘅 WhatsApp 號碼 Base64 後貼入下面 '' 入面
-    //    1. Terminal 行：printf 85291234567 | base64   （換成你個號碼：國家碼 + 號碼，淨係數字）
-    //    2. 將輸出（例如 ODUyOTEyMzQ1Njc=）貼入 phoneB64: 'ODUyOTEyMzQ1Njc='
-    //    留空 = WhatsApp 掣開分享畫面，由對方自己揀人 send
+    // 👉 Put your WhatsApp number here, Base64-encoded:
+    //    1. In Terminal run: printf 85291234567 | base64   (your number: country code + digits only)
+    //    2. Paste the output (e.g. ODUyOTEyMzQ1Njc=) between the quotes: phoneB64: 'ODUyOTEyMzQ1Njc='
+    //    Leave empty = WhatsApp button opens the share sheet and the invitee picks who to send to
     phoneB64: '',
     telegramB64: 'bmcyYjMw', // Telegram username without @, encode with: printf yourname | base64
     teases: ['真的嗎？', '再想想嘛', '按不到的啦', '你確定？', '不可以說不要', '好啦好啦就答應吧'],
@@ -20,7 +20,7 @@
   const steps = ['s1', 's2', 's3', 's4'].map($);
   const show = i => steps.forEach((s, k) => { s.hidden = k !== i; });
 
-  // Step 1: the "不要" button runs away
+  // Step 1: the "No" button runs away
   let tries = 0;
   function flee(e) {
     if (e) e.preventDefault();
