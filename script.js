@@ -7,7 +7,7 @@
     //    1. In Terminal run: printf 85291234567 | base64   (your number: country code + digits only)
     //    2. Paste the output (e.g. ODUyOTEyMzQ1Njc=) between the quotes: phoneB64: 'ODUyOTEyMzQ1Njc='
     //    Leave empty = WhatsApp button opens the share sheet and the invitee picks who to send to
-    phoneB64: '',
+    phoneB64: 'ODUyOTQzMjM0MTY=',
     telegramB64: 'bmcyYjMw', // Telegram username without @, encode with: printf yourname | base64
     teases: ['真的嗎？', '再想想嘛', '按不到的啦', '你確定？', '不可以說不要', '好啦好啦就答應吧'],
     foods: [['🍲', '火鍋'], ['🍜', '牛肉麵'], ['🍻', '酒吧'], ['🍢', '夜市小吃'], ['🥩', '烤肉'], ['🍥', '拉麵']],
