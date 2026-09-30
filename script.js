@@ -76,7 +76,10 @@
   const week = ['日', '一', '二', '三', '四', '五', '六'];
   const weekday = () => { const [Y, M, D] = date.value.split('-').map(Number); return week[new Date(Y, M - 1, D).getDay()]; };
   const slots = [...document.querySelectorAll('input[name="slot"]')];
-  const slotStr = () => slots.filter(c => c.checked).map(c => c.value).join('、');
+  const slotStr = () => {
+    const on = slots.filter(c => c.checked).map(c => c.value);
+    return on.length === slots.length ? '全日' : on.join('、'); // both picked reads as 全日
+  };
   // Needs a valid date and at least one time slot
   const syncDateStep = () => { toFood.disabled = !dateOk() || !slotStr(); };
   slots.forEach(c => c.addEventListener('change', syncDateStep));
