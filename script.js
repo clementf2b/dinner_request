@@ -32,7 +32,7 @@
   // Step 1: the "No" button runs away
   let tries = 0;
   function flee(e) {
-    if (e) e.preventDefault();
+    e.preventDefault();
     const cr = card.getBoundingClientRect();
     if (!no.classList.contains('loose')) {
       const nr = no.getBoundingClientRect();
@@ -67,9 +67,7 @@
 
   // Step 2: date
   const date = $('date'), toFood = $('toFood');
-  const pad2 = n => String(n).padStart(2, '0');
-  const t = new Date();
-  date.min = `${t.getFullYear()}-${pad2(t.getMonth() + 1)}-${pad2(t.getDate())}`;
+  date.min = new Date().toLocaleDateString('en-CA'); // en-CA formats as local YYYY-MM-DD
   // checkValidity() also rejects a past date typed in by hand, which `min` alone doesn't block
   const dateOk = () => !!date.value && date.checkValidity();
   const week = ['日', '一', '二', '三', '四', '五', '六'];
@@ -78,7 +76,7 @@
     toFood.disabled = !dateOk();
     $('weekday').textContent = date.value ? `（星期${weekday()}）` : '';
   });
-  toFood.addEventListener('click', () => { if (dateOk()) show(2); });
+  toFood.addEventListener('click', () => show(2)); // only enabled when the date is valid
 
   // Step 3: food
   const grid = $('foods'), toDone = $('toDone');
@@ -103,7 +101,6 @@
   // Step 4: summary + WhatsApp
   const decode = b64 => { try { return atob(b64); } catch { return ''; } };
   toDone.addEventListener('click', () => {
-    if (!picked.length || !dateOk()) return;
     const [, M, D] = date.value.split('-').map(Number);
     const dStr = `${M}月${D}日（星期${weekday()}）`;
     $('outDate').textContent = dStr;
