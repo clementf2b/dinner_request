@@ -51,6 +51,11 @@
       <input type="date" id="date" aria-describedby="weekday">
       <span class="weekday" id="weekday" aria-live="polite"></span>
     </div>
+    <div class="slots" role="group" aria-label="時段">
+      <label><input type="checkbox" name="slot" value="下午" checked>下午</label>
+      <label><input type="checkbox" name="slot" value="夜晚" checked>夜晚</label>
+    </div>
+    <p class="tease" id="dateHint" role="alert" hidden>玩野呀！呢日過咗喇，揀今日或者之後啦</p>
     <button class="btn btn-yes btn-wide" id="toFood" type="button" disabled>就這天！♥</button>
     <button class="link restart" type="button">重新揀</button>
   </section>
@@ -69,6 +74,7 @@
     <h1>約好了！😘</h1>
     <dl class="summary">
       <dt>日期</dt><dd id="outDate"></dd>
+      <dt>時間</dt><dd id="outTime"></dd>
       <dt>食咩</dt><dd id="outFood"></dd>
     </dl>
     <!-- Logos: Simple Icons (CC0) -->

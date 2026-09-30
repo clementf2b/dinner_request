@@ -88,8 +88,23 @@ input[type="date"] {
   border: 1px solid var(--line);
   border-radius: 12px;
   padding: 12px 14px;
+  /* iOS Safari: without these the field shrinks to its content and ignores width */
+  -webkit-appearance: none;
+  appearance: none;
+  display: block;
+  min-height: 48px;
 }
+/* iOS Safari centres the date; keep it left so the weekday on the right never overlaps */
+input[type="date"]::-webkit-date-and-time-value { text-align: left; }
 .date-wrap { position: relative; width: 100%; }
+.slots { display: flex; gap: 10px; width: 100%; }
+.slots label {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 10px; background: var(--chip); border: 1.5px solid transparent; border-radius: 12px;
+  font-size: 14px; cursor: pointer;
+}
+.slots label:has(:checked) { border-color: var(--accent); background: #fde6ee; }
+.slots input { accent-color: var(--accent); width: 18px; height: 18px; margin: 0; }
 /* Sits inside the input, left of the calendar icon; clicks pass through to the input */
 .weekday { position: absolute; right: 44px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 14px; pointer-events: none; }
 input[type="date"]:focus-visible { outline: 3px solid #f3a6c0; outline-offset: 1px; }

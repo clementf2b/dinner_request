@@ -20,7 +20,7 @@
       ['<svg width="24" height="24" viewBox="0 0 26 26"><ellipse cx="13" cy="12" rx="11.5" ry="3.6" fill="#8fb24a"/><path d="M1.5 12 h23 q-1 9.5 -11.5 10 q-10.5 -.5 -11.5 -10 Z" fill="#fff" stroke="#d8c8bc" stroke-width="1"/><path d="M4 19.5 q9 3 18 0" stroke="#7b9fd0" stroke-width="1.2" fill="none"/><ellipse cx="13" cy="12" rx="10" ry="2.8" fill="#9cc15a"/><ellipse cx="9" cy="11.6" rx="2" ry="1" fill="#f3e3c4"/><ellipse cx="16" cy="12.6" rx="1.8" ry=".9" fill="#f3e3c4"/><circle cx="12.5" cy="12.8" r=".9" fill="#e0402f"/><circle cx="18.5" cy="11.4" r=".8" fill="#e0402f"/><path d="M12 10.5 q2.4 -3.6 5.2 -2.4 q-1.6 3 -5.2 2.4 Z" fill="#2f7d32"/><path d="M12 10.5 q2 -1.4 4.4 -2" stroke="#1f5d24" stroke-width=".5" fill="none"/></svg>', '泰式美食'], // Thai green curry
       ['🍜', '拉麵'],
     ],
-    message: (date, food) => `我答應咗同你去約會 ♥\n日期：${date}\n想食：${food}`,
+    message: (date, time, food) => `我答應咗同你去約會 ♥\n日期：${date}\n時間：${time}\n想食：${food}`,
   };
   // --------------------
 
@@ -67,13 +67,22 @@
 
   // Step 2: date
   const date = $('date'), toFood = $('toFood');
-  date.min = new Date().toLocaleDateString('en-CA'); // en-CA formats as local YYYY-MM-DD
-  // checkValidity() also rejects a past date typed in by hand, which `min` alone doesn't block
-  const dateOk = () => !!date.value && date.checkValidity();
+  // Built by hand: toLocaleDateString('en-CA') isn't YYYY-MM-DD on iOS Safari
+  const t = new Date(), pad2 = n => String(n).padStart(2, '0');
+  date.min = `${t.getFullYear()}-${pad2(t.getMonth() + 1)}-${pad2(t.getDate())}`;
+  // iOS Safari's picker ignores `min` and its checkValidity() doesn't enforce it, so compare directly
+  // (YYYY-MM-DD strings sort the same as dates)
+  const dateOk = () => !!date.value && date.value >= date.min;
   const week = ['日', '一', '二', '三', '四', '五', '六'];
   const weekday = () => { const [Y, M, D] = date.value.split('-').map(Number); return week[new Date(Y, M - 1, D).getDay()]; };
+  const slots = [...document.querySelectorAll('input[name="slot"]')];
+  const slotStr = () => slots.filter(c => c.checked).map(c => c.value).join('、');
+  // Needs a valid date and at least one time slot
+  const syncDateStep = () => { toFood.disabled = !dateOk() || !slotStr(); };
+  slots.forEach(c => c.addEventListener('change', syncDateStep));
   date.addEventListener('input', () => {
-    toFood.disabled = !dateOk();
+    syncDateStep();
+    $('dateHint').hidden = !date.value || dateOk();
     $('weekday').textContent = date.value ? `（星期${weekday()}）` : '';
   });
   toFood.addEventListener('click', () => show(2)); // only enabled when the date is valid
@@ -106,7 +115,8 @@
     $('outDate').textContent = dStr;
     const foodStr = picked.join('、');
     $('outFood').textContent = foodStr;
-    const text = CONFIG.message(dStr, foodStr);
+    $('outTime').textContent = slotStr();
+    const text = CONFIG.message(dStr, slotStr(), foodStr);
     $('msg').textContent = text;
     // Empty or malformed number → WhatsApp share sheet instead of a dead link
     const phone = decode(CONFIG.phoneB64);
@@ -124,7 +134,8 @@
 
   // 重新揀 (steps 2–4): back to the date step with date and food cleared; the invite's "yes" stays answered
   document.querySelectorAll('.restart').forEach(b => b.addEventListener('click', () => {
-    date.value = ''; $('weekday').textContent = ''; toFood.disabled = true;
+    date.value = ''; $('weekday').textContent = ''; $('dateHint').hidden = true; toFood.disabled = true;
+    slots.forEach(c => { c.checked = true; });
     picked = []; syncFoods();
     $('copy').textContent = '複製訊息';
     show(1);
