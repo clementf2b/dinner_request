@@ -8,6 +8,8 @@
     //    2. Paste the output (e.g. ODUyOTEyMzQ1Njc=) between the quotes: phoneB64: 'ODUyOTEyMzQ1Njc='
     //    Leave empty = WhatsApp button opens the share sheet and the invitee picks who to send to
     phoneB64: 'ODUyOTQzMjM0MTY=',
+    // Google Apps Script web app URL (see apps-script/Code.gs); results go to your Sheet + email. Empty = off
+    resultUrl: 'https://script.google.com/macros/s/AKfycbyAU7RrOaOglID6NGD4ZNk2kapFNR21qfFeUV2GEH4iObF3YOZWh11q79f3Z3EqrmSjFQ/exec',
     telegramB64: 'bmcyYjMw', // Telegram username without @, encode with: printf yourname | base64
     teases: ['真的嗎？', '再想想嘛', '按不到的啦', '你確定？', '不可以說不要', '好啦好啦就答應吧'],
     maxFoods: 2, // how many foods the invitee can pick
@@ -120,6 +122,11 @@
     $('outFood').textContent = foodStr;
     $('outTime').textContent = slotStr();
     const text = CONFIG.message(dStr, slotStr(), foodStr);
+    // Fire-and-forget: no-cors hides the response, and a failure must not block the WhatsApp/Telegram buttons
+    if (CONFIG.resultUrl) fetch(CONFIG.resultUrl, {
+      method: 'POST', mode: 'no-cors', keepalive: true,
+      body: JSON.stringify({ date: dStr, time: slotStr(), food: foodStr }),
+    }).catch(() => {});
     $('msg').textContent = text;
     // Empty or malformed number → WhatsApp share sheet instead of a dead link
     const phone = decode(CONFIG.phoneB64);
