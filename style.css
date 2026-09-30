@@ -68,7 +68,7 @@ h1 {
 }
 .btn:focus-visible { outline: 3px solid #f3a6c0; outline-offset: 2px; }
 .btn-yes { background: var(--accent); color: var(--accent-ink); }
-.btn-yes:hover { background: #c02a5f; }
+.btn-yes:not(.btn-wide):hover { background: #c02a5f; } /* 就這天/就吃這個 have no hover */
 .btn-yes:disabled { opacity: .4; cursor: not-allowed; }
 /* Darker than the brand greens/blues so the white text stays readable */
 .btn-wa { background: #16a34a; color: #fff; }
@@ -136,9 +136,9 @@ a.btn { text-decoration: none; display: inline-flex; align-items: center; justif
    The growing 好喔 button sets an inline transform, which wins over this, as intended.
    WhatsApp/Telegram links (a.btn) skip the lift and only darken. */
 @media (hover: hover) {
-  button.btn:not(:disabled):hover, .food:hover { transform: translateY(-2px); box-shadow: 0 6px 14px -8px rgba(160, 60, 90, .45); }
+  button.btn:not(:disabled):not(.btn-wide):hover, .food:hover { transform: translateY(-2px); box-shadow: 0 6px 14px -8px rgba(160, 60, 90, .45); }
   .food:not([aria-pressed="true"]):hover { border-color: var(--line); }
   .link:hover { color: var(--ink); }
 }
-button.btn:not(:disabled):active, .food:active { transform: translateY(0); box-shadow: none; }
+button.btn:not(:disabled):not(.btn-wide):active, .food:active { transform: translateY(0); box-shadow: none; }
 @media (prefers-reduced-motion: reduce) { .btn, .food, .btn-no.loose { transition: none; } }

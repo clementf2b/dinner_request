@@ -122,11 +122,11 @@
     catch { const r = document.createRange(); r.selectNodeContents($('msg')); const s = getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent = '已選取，請手動複製'; }
   });
 
-  $('restart').addEventListener('click', () => {
-    tries = 0; tease.textContent = ''; yes.style.transform = '';
+  // 重新揀 (steps 2–4): back to the date step with date and food cleared; the invite's "yes" stays answered
+  document.querySelectorAll('.restart').forEach(b => b.addEventListener('click', () => {
     date.value = ''; $('weekday').textContent = ''; toFood.disabled = true;
     picked = []; syncFoods();
     $('copy').textContent = '複製訊息';
-    show(0);
-  });
+    show(1);
+  }));
 })();
