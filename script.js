@@ -78,7 +78,7 @@
   const slots = [...document.querySelectorAll('input[name="slot"]')];
   const slotStr = () => {
     const on = slots.filter(c => c.checked).map(c => c.value);
-    return on.length === slots.length ? '全日' : on.join('、'); // both picked reads as 全日
+    return on.length === slots.length ? '全日' : on.join('、'); // every slot picked reads as 全日
   };
   // Needs a valid date and at least one time slot
   const syncDateStep = () => { toFood.disabled = !dateOk() || !slotStr(); };
