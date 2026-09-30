@@ -137,12 +137,13 @@ a.btn { text-decoration: none; display: inline-flex; align-items: center; justif
 .bi { flex: none; }
 .link { background: none; border: 0; color: var(--muted); font: 13px var(--body); text-decoration: underline; cursor: pointer; padding: 4px; }
 /* Subtle lift on hover; mouse only, so taps on phones don't leave buttons stuck raised.
-   The growing 好喔 button sets an inline transform, which wins over this, as intended. */
+   The growing 好喔 button sets an inline transform, which wins over this, as intended.
+   WhatsApp/Telegram links (a.btn) skip the lift and only darken. */
 .food { transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease; }
 @media (hover: hover) {
-  .btn:not(:disabled):hover, .food:hover { transform: translateY(-2px); box-shadow: 0 6px 14px -8px rgba(160, 60, 90, .45); }
+  button.btn:not(:disabled):hover, .food:hover { transform: translateY(-2px); box-shadow: 0 6px 14px -8px rgba(160, 60, 90, .45); }
   .food:not([aria-pressed="true"]):hover { border-color: var(--line); }
   .link:hover { color: var(--ink); }
 }
-.btn:not(:disabled):active, .food:active { transform: translateY(0); box-shadow: none; }
+button.btn:not(:disabled):active, .food:active { transform: translateY(0); box-shadow: none; }
 @media (prefers-reduced-motion: reduce) { .btn, .food, .btn-no.loose { transition: none; } }
